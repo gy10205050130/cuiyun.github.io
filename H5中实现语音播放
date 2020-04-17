@@ -1,0 +1,39 @@
+使用h5中speechSynthesis语音合成功能(文字转语音)，具体api可参看https://developer.mozilla.org/zh-CN/docs/Web/API/SpeechSynthesis,
+不过对不同浏览器的支持度有一定限制，暂不支持ie浏览器（据官方文档藐视是可支持edge，但实测不行）。若需要在ie中也实现文字转语音功能，
+可使用let voiceObj = new ActiveXObject("Sapi.SpVoice")方式来实现，具体demo代码如下：
+<html>
+<script>
+var voiceObj = null;
+if ('speechSynthesis' in window) {
+	voiceObj = new SpeechSynthesisUtterance();
+	window.speechSynthesis.resume();
+	window.speechSynthesis.cancel();
+} else {
+	voiceObj = new ActiveXObject("Sapi.SpVoice");
+	//voiceObj.Speak("", 2);
+}
+function speakText(text){
+	if ('speechSynthesis' in window) {
+	    sayBySpeechSynthesis(text);
+	} else {
+		sayByActiveXObject(text);
+	}
+}
+function sayBySpeechSynthesis(text) {
+	voiceObj.rate = 1;   //播放语速
+	voiceObj.pitch = 1;  //音调高低
+	voiceObj.text = text;  //可以直接写在peechSynthesisUtterance("播放文本")中
+	voiceObj.volume = 1;  //播放音量，最大1
+	voiceObj.lang="zh-cn";
+	currentReadText = text;
+    speechSynthesis.speak(voiceObj);
+}
+function sayByActiveXObject(text) {
+	voiceObj.volume=100;    //  '音量1~100
+	voiceObj.rate=0;        //    '講話速率-10~10
+	currentReadText = text;
+	voiceObj.Speak(text, 1);
+}
+speakText("我是测试语音")
+</script>
+</html>
